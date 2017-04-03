@@ -13,7 +13,8 @@ var gulp = require('gulp'),
   es = require('event-stream'),
   babel = require('gulp-babel'),
   clean = require('gulp-clean'),
-  pug = require('gulp-pug');
+  pug = require('gulp-pug'),
+  plumber = require('gulp-plumber');
 
 function errorLog(error) {
   console.error(error);
@@ -50,7 +51,7 @@ gulp.task('styles', function () {
     .pipe(concat('style.css'))
     .pipe(sourcemaps.init())
     .pipe(sass({
-      outputStyle: 'compressed'
+      //outputStyle: 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer({
       browsers: ['last 3 versions']
@@ -74,6 +75,7 @@ gulp.task('jsECMAScript5', function () { //tak źle pokazuje sourcemaps
 gulp.task('jsECMAScript6', function () {
   return gulp.src('src/js/ECMAScript6/**/*.js')
     .pipe(sourcemaps.init())
+    .pipe(plumber())
     .pipe(babel({ 
       presets: ['es2015'] 
     }))
@@ -90,7 +92,7 @@ gulp.task('coffee', function () {
     .pipe(sourcemaps.init())
     .pipe(coffee())
     .pipe(concat('coffee.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .on('error', errorLog)
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('build/js'))
@@ -124,6 +126,7 @@ gulp.task('watch', function () {
   gulp.watch('src/js/coffee/**/*.coffee', ['coffee']);
   gulp.watch('src/templates/html/**/*.html', ['html']);
   gulp.watch('src/templates/pug/**/*.pug', ['html']);
+  gulp.watch('src/scss/**/*.scss', ['styles']);
 })
 
 gulp.task('default', ['html', 'styles', 'jsECMAScript5', 'jsECMAScript6', 'coffee', 'img', 'browserSync', 'watch']);
