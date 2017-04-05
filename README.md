@@ -1,2 +1,2 @@
-# Test
+# ECMAScript6: examples
 
